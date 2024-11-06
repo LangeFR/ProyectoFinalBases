@@ -1,0 +1,59 @@
+# Directorios de compilación
+/bin/
+/build/
+/out/
+
+# Archivos de logs
+*.log
+
+# Archivos de configuración de IDE (Eclipse, IntelliJ IDEA, NetBeans)
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# Archivos de Maven y Gradle
+.mvn/
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Librerías descargadas y otros archivos generados
+*.jar
+*.war
+*.ear
+*.class
+
+# Archivos de JavaFX específicos (si usas JDK modular)
+jmods/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos temporales de SO y editor
+*.swp
+*~
+*.swo
