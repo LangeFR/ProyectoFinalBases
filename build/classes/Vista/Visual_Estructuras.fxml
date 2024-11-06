@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: FFF3C2;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controlador.Visual_EstructurasController">
+   <children>
+      <Pane layoutX="35.0" layoutY="34.0" prefHeight="351.0" prefWidth="533.0" style="-fx-background-color: #671515;">
+         <children>
+            <Text fill="WHITE" layoutX="171.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Visualización de estructura">
+               <font>
+                  <Font name="Bookman Old Style" size="16.0" />
+               </font>
+            </Text>
+            <Text fill="WHITE" layoutX="116.0" layoutY="261.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tabla 1">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Text>
+            <Text fill="WHITE" layoutX="377.0" layoutY="260.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tabla 2">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Text>
+            <Button fx:id="btn_Regresar" layoutX="405.0" layoutY="296.0" mnemonicParsing="false" onAction="#doRegresar" style="-fx-background-color: orange;" text="REGRESAR" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Button>
+            <TableView fx:id="tableview_tabla1" layoutX="12.0" layoutY="49.0" prefHeight="200.0" prefWidth="250.0">
+              <columns>
+                <TableColumn prefWidth="75.0" text="C1" />
+                <TableColumn prefWidth="75.0" text="C2" />
+              </columns>
+            </TableView>
+            <TableView fx:id="tableview_tabla2" layoutX="276.0" layoutY="49.0" prefHeight="200.0" prefWidth="244.0">
+               <columns>
+                  <TableColumn prefWidth="75.0" text="C1" />
+                  <TableColumn prefWidth="75.0" text="C2" />
+               </columns>
+            </TableView>
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>
