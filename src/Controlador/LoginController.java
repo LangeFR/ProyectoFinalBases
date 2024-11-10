@@ -47,6 +47,8 @@ public class LoginController implements Initializable {
     private TextField text_Usuario;
     @FXML
     private TextField text_Contrasena;
+    @FXML
+    private String contrasena;
 
     /**
      * Método inicializador que se ejecuta tras cargar el FXML pero antes de que la ventana sea visible.
@@ -65,12 +67,18 @@ public class LoginController implements Initializable {
      * 
      */
     @FXML
+    public String getContrasena(){
+        return contrasena;
+    }
+    
+    
+    @FXML
     private void DoIngresar(ActionEvent event) {
         // Recoge los valores ingresados por el usuario en los campos de texto.
         String servidor = text_Servidor.getText().trim();
         String puerto = text_Puerto.getText().trim();
         String usuario = text_Usuario.getText().trim();
-        String contrasena = text_Contrasena.getText().trim();
+        contrasena = text_Contrasena.getText().trim();
 
         // Verifica que todos los campos estén llenos.
         if (servidor.isEmpty() || puerto.isEmpty() || usuario.isEmpty() || contrasena.isEmpty()) {
@@ -93,6 +101,10 @@ public class LoginController implements Initializable {
             // Si la conexión es exitosa, cambia a la vista de navegación principal.
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/Navegacion.fxml"));
             Parent root = loader.load();
+            
+            NavegaciónController navegacionController = loader.getController();
+            navegacionController.login(usuario, contrasena, url);
+            
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();

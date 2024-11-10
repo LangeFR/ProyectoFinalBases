@@ -38,24 +38,34 @@ public class NavegaciónController implements Initializable {
     private Connection conn = null; // Conexión a la base de datos
     @FXML 
     private Button btn_verTablas;
+    
+    private String contrasena;
+    private String username;
+    private String jdbcUrl;
+    
+    public void login(String usuario, String contrasena, String url) {
+        //Recibe los datos para conectar correctamente con mysql
+        this.contrasena = contrasena;
+        this.username = usuario;
+        this.jdbcUrl = url;
+         connectDatabase();
+    }
 
     // Método que se llama automáticamente al cargar el controlador
     public void initialize(URL url, ResourceBundle rb) {
-        connectDatabase(); // Establece la conexión con la base de datos
-        loadDatabases(); // Carga las bases de datos disponibles y las muestra
+         // Establece la conexión con la base de datos
+         // Carga las bases de datos disponibles y las muestra
         setupRadioButtons(); // Configura los botones de radio
         setupDatabaseSelectionListener(); // Establece los listeners para la selección de base de datos
         initializeListViews(); // Inicializa las vistas de listas
     }
 
     // Establece la conexión con la base de datos
-    private void connectDatabase() {
-        String jdbcUrl = "jdbc:mysql://localhost:3306/?useSSL=false";
-        String username = "root";
-        String password = "12345";
+    private void connectDatabase() {    
         try {
-            conn = DriverManager.getConnection(jdbcUrl, username, password);
+            conn = DriverManager.getConnection(jdbcUrl, username, contrasena);
             System.out.println("Conexión establecida");
+            loadDatabases();
         } catch (SQLException ex) {
             System.out.println("Error connecting to database: " + ex.getMessage());
             ex.printStackTrace();
