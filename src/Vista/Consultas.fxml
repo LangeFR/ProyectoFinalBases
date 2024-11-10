@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="673.0" style="-fx-background-color: #671515;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Visual_EstructurasController.java">
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="673.0" style="-fx-background-color: #671515;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controlador.ConsultasController">
    <children>
       <Pane layoutX="13.0" layoutY="31.0" prefHeight="338.0" prefWidth="646.0" style="-fx-background-color: #FFF3C2;">
          <children>
@@ -18,8 +18,8 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Text>
-            <ComboBox layoutX="26.0" layoutY="42.0" prefHeight="28.0" prefWidth="101.0" promptText="Selecciona la llave 1" />
-            <ComboBox layoutX="176.0" layoutY="42.0" prefHeight="28.0" prefWidth="101.0" promptText="Selecciona la llave 2" />
+            <ComboBox fx:id="comboRelacionesTabla1" layoutX="26.0" layoutY="42.0" prefHeight="28.0" prefWidth="101.0" promptText="Selecciona la llave 1" />
+            <ComboBox fx:id="comboRelacionesTabla2" layoutX="176.0" layoutY="42.0" prefHeight="28.0" prefWidth="101.0" promptText="Selecciona la llave 2" />
             <Text layoutX="145.0" layoutY="60.0" strokeType="OUTSIDE" strokeWidth="0.0" text="=" wrappingWidth="14.933837890625">
                <font>
                   <Font size="23.0" />
@@ -35,14 +35,14 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Text>
-            <TableView layoutX="22.0" layoutY="233.0" prefHeight="91.0" prefWidth="603.0" />
-            <ComboBox layoutX="26.0" layoutY="132.0" prefHeight="28.0" prefWidth="91.0" promptText="campo" style="-fx-background-color: PINK;" />
-            <ComboBox layoutX="127.0" layoutY="132.0" prefHeight="28.0" prefWidth="101.0" promptText="operador" style="-fx-background-color: PINK;" />
-            <TextField layoutX="241.0" layoutY="133.0" prefHeight="26.0" prefWidth="64.0" style="-fx-background-color: WHITE;" />
-            <ComboBox layoutX="316.0" layoutY="132.0" prefHeight="28.0" prefWidth="80.0" promptText="AND" style="-fx-background-color: PINK;" />
-            <ComboBox layoutX="26.0" layoutY="168.0" prefHeight="28.0" prefWidth="91.0" promptText="campo" style="-fx-background-color: PINK;" />
-            <ComboBox layoutX="127.0" layoutY="168.0" prefHeight="28.0" prefWidth="101.0" promptText="operador" style="-fx-background-color: PINK;" />
-            <TextField layoutX="241.0" layoutY="169.0" prefHeight="26.0" prefWidth="64.0" style="-fx-background-color: WHITE;" />
+            <TableView fx:id="tablaResultados" layoutX="22.0" layoutY="233.0" prefHeight="91.0" prefWidth="603.0" />
+            <ComboBox fx:id="comboCampo1" layoutX="26.0" layoutY="132.0" prefHeight="28.0" prefWidth="91.0" promptText="campo" style="-fx-background-color: PINK;" />
+            <ComboBox fx:id="comboOperador1" layoutX="127.0" layoutY="132.0" prefHeight="28.0" prefWidth="101.0" promptText="operador" style="-fx-background-color: PINK;" />
+            <TextField fx:id="textInput1" layoutX="241.0" layoutY="133.0" prefHeight="26.0" prefWidth="64.0" style="-fx-background-color: WHITE;" />
+            <ComboBox fx:id="comboOperador3" layoutX="316.0" layoutY="132.0" prefHeight="28.0" prefWidth="80.0" promptText="AND" style="-fx-background-color: PINK;" />
+            <ComboBox fx:id="comboCampo2" layoutX="26.0" layoutY="168.0" prefHeight="28.0" prefWidth="91.0" promptText="campo" style="-fx-background-color: PINK;" />
+            <ComboBox fx:id="comboOperador2" layoutX="127.0" layoutY="168.0" prefHeight="28.0" prefWidth="101.0" promptText="operador" style="-fx-background-color: PINK;" />
+            <TextField fx:id="textInput2" layoutX="241.0" layoutY="169.0" prefHeight="26.0" prefWidth="64.0" style="-fx-background-color: WHITE;" />
             <Text layoutX="437.0" layoutY="114.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Vistas">
                <font>
                   <Font name="System Bold" size="14.0" />

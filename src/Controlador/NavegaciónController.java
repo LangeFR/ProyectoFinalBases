@@ -234,6 +234,16 @@ private void loadTables(String database, ListView<String>... lists) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/Consultas.fxml"));
             Parent root = loader.load();
+            ConsultasController consultasController = loader.getController();
+            
+            // Pasar la conexión, base de datos y tablas seleccionadas
+            consultasController.initializeData(
+                conn,
+                list_base.getSelectionModel().getSelectedItem(),
+                list_tablas.getSelectionModel().getSelectedItem(),
+                list_tablas2.isDisabled() ? null : list_tablas2.getSelectionModel().getSelectedItem()
+            );
+            
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();

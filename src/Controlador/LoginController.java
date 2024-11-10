@@ -59,6 +59,10 @@ public class LoginController implements Initializable {
         // Establece las imágenes en los ImageView desde los recursos del proyecto.
         img_Logo.setImage(new Image("/vista/logo.png"));
         img_Divisor.setImage(new Image("/vista/divisor.png"));
+        
+        // Configura los valores predeterminados
+        text_Servidor.setText("localhost");
+        text_Puerto.setText("3306");
     }    
     
     /**
