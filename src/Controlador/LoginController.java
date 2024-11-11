@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
 
 sanitago uwu
+comentario de prueba
  */
 
 package Controlador;
