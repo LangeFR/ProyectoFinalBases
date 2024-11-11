@@ -28,30 +28,43 @@ public class Visual_TablasController implements Initializable {
     private TableView<ObservableList<String>> tabla2_view; 
 
     private Connection conn;
+    private String contrasena;
+    private String username;
+    private String jdbcUrl;
 
     public void initialize(URL url, ResourceBundle rb) {
         // Las configuraciones de las tablas se realizan dinámicamente en loadTableData
     }
 
+     public void setConnection(Connection connection) {
+        this.conn = connection;
+    }
+        
+    public void login(String usuario, String contrasena, String url) {
+        //Recibe los datos para conectar correctamente con mysql
+        this.contrasena = contrasena;
+        this.username = usuario;
+        this.jdbcUrl = url;
+         connectDatabase();
+    }
+
+    private void connectDatabase() {
+        try {
+            conn = DriverManager.getConnection(jdbcUrl, username, contrasena);
+            System.out.println("Conexión establecida");
+        } catch (SQLException ex) {
+            System.out.println("Error al conectar a la base");
+            ex.printStackTrace();
+        }
+    }
+    
     public void initializeWithTables(String dbName, String tableName1, String tableName2) {
-        connectDatabase(dbName);
+        connectDatabase();
         if (tableName1 != null) {
             loadTableData(tableName1, tabla1_view);
         }
         if (tableName2 != null) {
             loadTableData(tableName2, tabla2_view);
-        }
-    }
-
-    private void connectDatabase(String dbName) {
-        try {
-            String jdbcUrl = "jdbc:mysql://localhost:3306/" + dbName + "?useSSL=false";
-            String username = "root";
-            String password = "12345";
-            conn = DriverManager.getConnection(jdbcUrl, username, password);
-        } catch (SQLException ex) {
-            System.out.println("Error connecting to database: " + ex.getMessage());
-            ex.printStackTrace();
         }
     }
 
