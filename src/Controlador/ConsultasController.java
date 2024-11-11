@@ -136,83 +136,148 @@ public class ConsultasController implements Initializable {
     }
 
     private void initializeListeners() {
-    // Listener para los RadioButtons de selección de tabla para Condición 1
-    ChangeListener<Boolean> tablaCondicion1Listener = (observable, oldValue, newValue) -> {
-        if (newValue) { // Solo reaccionar cuando el RadioButton está seleccionado
-            if (btnTabla1Condicion1.isSelected()) {
-                loadTableColumns(selectedTable1, comboCampo1);
-            } else if (btnTabla2Condicion1.isSelected()) {
-                loadTableColumns(selectedTable2, comboCampo1);
-            }
+        comboOperador1.valueProperty().addListener((observable, oldValue, newValue) -> {
+        String operador = newValue;
+        String campo = comboCampo1.getValue();
+
+        // Lógica especial para operadores "Esta vacio" y "No esta vacio"
+        if (operador.equals("Esta vacio") || operador.equals("No esta vacio")) {
+            textInput1.clear();
+            textInput1.setDisable(true);
+        } else {
+            textInput1.setDisable(false);
         }
-    };
+        
+        System.out.println("Ejecutando nulls...");
+        ejecutarConsulta();
+    });
 
-    // Listener para los RadioButtons de selección de tabla para Condición 2
-    ChangeListener<Boolean> tablaCondicion2Listener = (observable, oldValue, newValue) -> {
-        if (newValue) {
-            if (btnTabla1Condicion2.isSelected()) {
-                loadTableColumns(selectedTable1, comboCampo2);
-            } else if (btnTabla2Condicion2.isSelected()) {
-                loadTableColumns(selectedTable2, comboCampo2);
-            }
+    comboOperador2.valueProperty().addListener((observable, oldValue, newValue) -> {
+        String operador = newValue;
+        String campo = comboCampo2.getValue();
+
+        // Lógica especial para operadores "Esta vacio" y "No esta vacio"
+        if (operador.equals("Esta vacio") || operador.equals("No esta vacio")) {
+            textInput2.clear();
+            textInput2.setDisable(true);
+        } else {
+            textInput2.setDisable(false);
         }
-    };
+        
+        ejecutarConsulta();
+    });
+    System.out.println("Ejecutando no nulls...");
+        
+        
+        
+        initializeLIstenersRelaciones();
+        // Listener para los RadioButtons de selección de tabla para Condición 1
+        ChangeListener<Boolean> tablaCondicion1Listener = (observable, oldValue, newValue) -> {
+            if (newValue) { // Solo reaccionar cuando el RadioButton está seleccionado
+                if (btnTabla1Condicion1.isSelected()) {
+                    loadTableColumns(selectedTable1, comboCampo1);
+                } else if (btnTabla2Condicion1.isSelected()) {
+                    loadTableColumns(selectedTable2, comboCampo1);
+                }
+            }
+        };
 
-    // Asignar los listeners a los RadioButtons correspondientes
-    btnTabla1Condicion1.selectedProperty().addListener(tablaCondicion1Listener);
-    btnTabla2Condicion1.selectedProperty().addListener(tablaCondicion1Listener);
-    btnTabla1Condicion2.selectedProperty().addListener(tablaCondicion2Listener);
-    btnTabla2Condicion2.selectedProperty().addListener(tablaCondicion2Listener);
+        // Listener para los RadioButtons de selección de tabla para Condición 2
+        ChangeListener<Boolean> tablaCondicion2Listener = (observable, oldValue, newValue) -> {
+            if (newValue) {
+                if (btnTabla1Condicion2.isSelected()) {
+                    loadTableColumns(selectedTable1, comboCampo2);
+                } else if (btnTabla2Condicion2.isSelected()) {
+                    loadTableColumns(selectedTable2, comboCampo2);
+                }
+            }
+        };
 
-    // Otros listeners existentes (ejecutar consulta en vivo, etc.)
-    ChangeListener<Object> liveUpdateListener = (observable, oldValue, newValue) -> ejecutarConsulta();
-    comboCampo1.valueProperty().addListener(liveUpdateListener);
-    comboCampo2.valueProperty().addListener(liveUpdateListener);
-    comboOperador1.valueProperty().addListener(liveUpdateListener);
-    comboOperador2.valueProperty().addListener(liveUpdateListener);
-    comboOperador3.valueProperty().addListener(liveUpdateListener);
+        // Asignar los listeners a los RadioButtons correspondientes
+        btnTabla1Condicion1.selectedProperty().addListener(tablaCondicion1Listener);
+        btnTabla2Condicion1.selectedProperty().addListener(tablaCondicion1Listener);
+        btnTabla1Condicion2.selectedProperty().addListener(tablaCondicion2Listener);
+        btnTabla2Condicion2.selectedProperty().addListener(tablaCondicion2Listener);
 
-    textInput1.textProperty().addListener(liveUpdateListener);
-    textInput2.textProperty().addListener(liveUpdateListener);
+        // Otros listeners existentes (ejecutar consulta en vivo, etc.)
+        ChangeListener<Object> liveUpdateListener = (observable, oldValue, newValue) -> ejecutarConsulta();
+        comboCampo1.valueProperty().addListener(liveUpdateListener);
+        comboCampo2.valueProperty().addListener(liveUpdateListener);
+        comboOperador1.valueProperty().addListener(liveUpdateListener);
+        comboOperador2.valueProperty().addListener(liveUpdateListener);
+        comboOperador3.valueProperty().addListener(liveUpdateListener);
+
+        textInput1.textProperty().addListener(liveUpdateListener);
+        textInput2.textProperty().addListener(liveUpdateListener);
+    }
+
+    private void initializeLIstenersRelaciones(){
+        // Listener para comboRelacionesTabla1
+        comboRelacionesTabla1.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && !newValue.equals("Campo")) {
+                // Actualizar comboCampo1 según la tabla seleccionada en los RadioButtons
+                if (btnTabla1Condicion1.isSelected()) {
+                    loadTableColumns(selectedTable1, comboCampo1);
+                } else if (btnTabla2Condicion1.isSelected()) {
+                    loadTableColumns(selectedTable2, comboCampo1);
+                }
+                ejecutarConsulta();
+            }
+        });
+
+        // Listener para comboRelacionesTabla2
+        comboRelacionesTabla2.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && !newValue.equals("Campo")) {
+                // Actualizar comboCampo2 según la tabla seleccionada en los RadioButtons
+                if (btnTabla1Condicion2.isSelected()) {
+                    loadTableColumns(selectedTable1, comboCampo2);
+                } else if (btnTabla2Condicion2.isSelected()) {
+                    loadTableColumns(selectedTable2, comboCampo2);
+                }
+                ejecutarConsulta();
+            }
+        });
+
+    }
+    @FXML
+private void ejecutarConsulta() {
+    // Limpiar consulta anterior
+    consulta.clear();
+
+    // Configurar JOIN si hay una segunda tabla seleccionada y ambas relaciones tienen un valor
+    String relacion1 = comboRelacionesTabla1.getValue();
+    String relacion2 = comboRelacionesTabla2.getValue();
+    if (selectedTable2 != null && !selectedTable2.isEmpty() 
+        && relacion1 != null && !relacion1.isEmpty() 
+        && relacion2 != null && !relacion2.isEmpty()) {
+        consulta.addJoin("JOIN " + selectedTable2 + " ON " + selectedTable1 + "." + relacion1 + " = " + selectedTable2 + "." + relacion2);
+    }
+
+    // Verificar si se debe agregar la primera condición o si es "Está vacío"/"No está vacío"
+    cond1 = (comboCampo1.getValue() != null && !comboCampo1.getValue().equals("Campo"))
+            && (comboOperador1.getValue() != null && !comboOperador1.getValue().equals("Operador"))
+            && (comboOperador1.getValue().equals("Esta vacio") || comboOperador1.getValue().equals("No esta vacio")
+                || (textInput1.getText() != null && !textInput1.getText().isEmpty()));
+
+    // Verificar si se debe agregar la segunda condición o si es "Está vacío"/"No está vacío"
+    cond2 = (comboCampo2.getValue() != null && !comboCampo2.getValue().equals("Campo"))
+            && (comboOperador2.getValue() != null && !comboOperador2.getValue().equals("Operador"))
+            && (comboOperador2.getValue().equals("Esta vacio") || comboOperador2.getValue().equals("No esta vacio")
+                || (textInput2.getText() != null && !textInput2.getText().isEmpty()));
+
+    // Agregar condiciones si las banderas están activadas
+    if (cond1) {
+        agregarFiltro(comboCampo1.getValue(), comboOperador1.getValue(), textInput1.getText());
+    }
+    if (cond2) {
+        agregarFiltro(comboCampo2.getValue(), comboOperador2.getValue(), textInput2.getText(), comboOperador3.getValue());
+    }
+
+    // Ejecutar consulta y cargar los resultados
+    ResultSet rs = consulta.execute();
+    mostrarResultados(rs);
 }
 
-    @FXML
-    private void ejecutarConsulta() {
-        // Limpiar consulta anterior
-        consulta.clear();
-
-        // Configurar JOIN si hay una segunda tabla seleccionada y ambas relaciones tienen un valor
-        String relacion1 = comboRelacionesTabla1.getValue();
-        String relacion2 = comboRelacionesTabla2.getValue();
-        if (selectedTable2 != null && !selectedTable2.isEmpty() 
-            && relacion1 != null && !relacion1.isEmpty() 
-            && relacion2 != null && !relacion2.isEmpty()) {
-            consulta.addJoin("JOIN " + selectedTable2 + " ON " + selectedTable1 + "." + relacion1 + " = " + selectedTable2 + "." + relacion2);
-        }
-
-        // Verificar si se debe agregar la primera condición
-        cond1 = (comboCampo1.getValue() != null && !comboCampo1.getValue().equals("Campo"))
-                && (comboOperador1.getValue() != null && !comboOperador1.getValue().equals("Operador"))
-                && (textInput1.getText() != null && !textInput1.getText().isEmpty());
-
-        // Verificar si se debe agregar la segunda condición
-        cond2 = (comboCampo2.getValue() != null && !comboCampo2.getValue().equals("Campo"))
-                && (comboOperador2.getValue() != null && !comboOperador2.getValue().equals("Operador"))
-                && (textInput2.getText() != null && !textInput2.getText().isEmpty());
-
-        // Agregar condiciones si las banderas están activadas
-        if (cond1) {
-            agregarFiltro(comboCampo1.getValue(), comboOperador1.getValue(), textInput1.getText());
-        }
-        if (cond2) {
-            //agregarFiltro(comboCampo2.getValue(), comboOperador2.getValue(), textInput2.getText(), comboOperador3.getValue());
-            agregarFiltro(comboCampo2.getValue(), comboOperador2.getValue(), textInput2.getText());
-        }
-
-        // Ejecutar consulta y cargar los resultados
-        ResultSet rs = consulta.execute();
-        mostrarResultados(rs);
-    }
 
 
     private void agregarFiltro(String campo, String operador, String valor) {
@@ -220,66 +285,78 @@ public class ConsultasController implements Initializable {
     }
     
     
-    private void agregarFiltro(String campo, String operador, String valor, String operadorLogico) {
+private void agregarFiltro(String campo, String operador, String valor, String operadorLogico) {
+    System.out.println("=== Inicio de agregarFiltro ===");
     System.out.println("Campo recibido: " + campo);
-    System.out.println("Valor de comboCampo1: " + comboCampo1.getValue());
-    System.out.println("Valor de comboCampo2: " + comboCampo2.getValue());
+    System.out.println("Operador recibido: " + operador);
+    System.out.println("Valor recibido: " + valor);
+    System.out.println("Operador lógico recibido: " + operadorLogico);
+
+    if (operador.equals("Esta vacio") || operador.equals("No esta vacio")) {
+        valor = ""; // No se utiliza un valor en estos operadores
+        if (campo.equals(comboCampo1.getValue())) {
+            textInput1.clear();
+            textInput1.setDisable(true);
+        } else if (campo.equals(comboCampo2.getValue())) {
+            textInput2.clear();
+            textInput2.setDisable(true);
+        }
+    } else {
+        // Reactivar el campo de texto si el operador cambia a otro valor
+        if (campo.equals(comboCampo1.getValue())) {
+            textInput1.setDisable(false);
+        } else if (campo.equals(comboCampo2.getValue())) {
+            textInput2.setDisable(false);
+        }
+    }
 
     if (campo != null && !campo.isEmpty() && operador != null && !operador.isEmpty()) {
-        // Verificar si el campo es ambiguo
         boolean isAmbiguous = checkAmbiguity(campo);
         if (isAmbiguous) {
-            System.out.println("Campo ambiguo detectado: " + campo);
-
-            // Determinar la condición (Condición 1 o Condición 2)
-            if (campo.equals(comboCampo1.getValue())) { // Condición 1
-                System.out.println("Campo corresponde a Condición 1");
-                System.out.println("Estado btnTabla1Condicion1 seleccionado: " + btnTabla1Condicion1.isSelected());
-                System.out.println("Estado btnTabla2Condicion1 seleccionado: " + btnTabla2Condicion1.isSelected());
-                
+            if (campo.equals(comboCampo1.getValue())) {
                 if (btnTabla1Condicion1.isSelected()) {
                     campo = selectedTable1 + "." + campo;
                 } else if (btnTabla2Condicion1.isSelected()) {
                     campo = selectedTable2 + "." + campo;
                 }
-            } else if (campo.equals(comboCampo2.getValue())) { // Condición 2
-                System.out.println("Campo corresponde a Condición 2");
-                System.out.println("Estado btnTabla1Condicion2 seleccionado: " + btnTabla1Condicion2.isSelected());
-                System.out.println("Estado btnTabla2Condicion2 seleccionado: " + btnTabla2Condicion2.isSelected());
-                
+            } else if (campo.equals(comboCampo2.getValue())) {
                 if (btnTabla1Condicion2.isSelected()) {
                     campo = selectedTable1 + "." + campo;
                 } else if (btnTabla2Condicion2.isSelected()) {
                     campo = selectedTable2 + "." + campo;
                 }
             }
-            
-            System.out.println("Campo después de prefijar: " + campo);
         }
 
-        // Procesar valor para el operador LIKE usando switch
-        if (operador.equals("Empieza por") || operador.equals("Termina por") || operador.equals("Contiene")) {
+        // Construcción del filtro
+        String filtro = "";
+        if (operador.equals("Esta vacio") || operador.equals("No esta vacio")) {
+            filtro = campo + " " + getSQLOperator(operador);
+        } else if (operador.equals("Empieza por") || operador.equals("Termina por") || operador.equals("Contiene")) {
             valor = switch (operador) {
                 case "Empieza por" -> valor + "%";
                 case "Termina por" -> "%" + valor;
                 case "Contiene" -> "%" + valor + "%";
                 default -> valor;
             };
+            filtro = campo + " " + getSQLOperator(operador) + " '" + valor + "'";
+        } else {
+            filtro = campo + " " + getSQLOperator(operador) + " '" + valor + "'";
         }
 
-        String filtro = campo + " " + getSQLOperator(operador) + " '" + valor + "'";
+        System.out.println("Filtro final: " + filtro);
 
-        // Añadir operador lógico solo si ya hay una condición en la consulta
         if (!consulta.getFilters().isEmpty() && operadorLogico != null && !operadorLogico.isEmpty()) {
             filtro = operadorLogico + " " + filtro;
         }
 
         consulta.addFilter(filtro);
-
-        // Imprimir el estado actual de la consulta después de agregar el filtro
         System.out.println("Consulta en construcción: " + consulta.buildQuery());
     }
+    System.out.println("=== Fin de agregarFiltro ===");
 }
+
+
 
 
 // Método auxiliar para verificar si un campo es ambiguo
@@ -332,8 +409,8 @@ private boolean checkAmbiguity(String campo) {
             case "Menor o igual a" -> "<=";
             case "Mayor o igual a" -> ">=";
             case "Empieza por", "Contiene", "Termina por" -> "LIKE";
-            case "Está vacío" -> "IS NULL";
-            case "No está vacío" -> "IS NOT NULL";
+            case "Esta vacio" -> "IS NULL";
+            case "No esta vacio" -> "IS NOT NULL";
             default -> "=";
         };
     }
@@ -341,7 +418,7 @@ private boolean checkAmbiguity(String campo) {
     private void initializeOperatorCombos() {
         ObservableList<String> operadores = FXCollections.observableArrayList(
             "Operador", "Menor que", "Mayor que", "Menor o igual a", "Mayor o igual a",
-            "Empieza por", "Contiene", "Termina por", "Está vacío", "No está vacío"
+            "Empieza por", "Contiene", "Termina por", "Esta vacio", "No esta vacio"
         );
         comboOperador1.setItems(operadores);
         comboOperador2.setItems(operadores);

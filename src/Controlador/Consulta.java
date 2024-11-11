@@ -65,7 +65,7 @@ public class Consulta {
 
         if (!filters.isEmpty()) {
             query.append(" WHERE ");
-            query.append(String.join(" AND ", filters));
+            query.append(String.join(" ", filters));
         }
 
         if (!limit.isEmpty()) {
