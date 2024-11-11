@@ -63,6 +63,9 @@ public class LoginController implements Initializable {
         // Configura los valores predeterminados
         text_Servidor.setText("localhost");
         text_Puerto.setText("3306");
+        text_Usuario.setText("root");
+        text_Contrasena.setText("123456");
+        
     }    
     
     /**
