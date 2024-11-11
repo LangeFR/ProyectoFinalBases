@@ -120,39 +120,8 @@ public class ConsultasController implements Initializable {
     }
 
     private void initializeListeners() {
-        // Listener para los RadioButtons de selección de tabla para Condición 1
-        ChangeListener<Boolean> tablaCondicion1Listener = (observable, oldValue, newValue) -> {
-            if (newValue) { // Solo reaccionar cuando el RadioButton está seleccionado
-                if (btnTabla1Condicion1.isSelected()) {
-                    loadTableColumns(selectedTable1, comboCampo1);
-                } else if (btnTabla2Condicion1.isSelected()) {
-                    loadTableColumns(selectedTable2, comboCampo1);
-                }
-            }
-        };
-
-        // Listener para los RadioButtons de selección de tabla para Condición 2
-        ChangeListener<Boolean> tablaCondicion2Listener = (observable, oldValue, newValue) -> {
-            if (newValue) {
-                if (btnTabla1Condicion2.isSelected()) {
-                    loadTableColumns(selectedTable1, comboCampo2);
-                } else if (btnTabla2Condicion2.isSelected()) {
-                    loadTableColumns(selectedTable2, comboCampo2);
-                }
-            }
-        };
-
-        // Asignar los listeners a los RadioButtons correspondientes
-        btnTabla1Condicion1.selectedProperty().addListener(tablaCondicion1Listener);
-        btnTabla2Condicion1.selectedProperty().addListener(tablaCondicion1Listener);
-        btnTabla1Condicion2.selectedProperty().addListener(tablaCondicion2Listener);
-        btnTabla2Condicion2.selectedProperty().addListener(tablaCondicion2Listener);
+        
     
-        
-        
-        
-        
-        
         ChangeListener<Object> liveUpdateListener = (observable, oldValue, newValue) -> ejecutarConsulta();
 
         comboCampo1.valueProperty().addListener(liveUpdateListener);
