@@ -63,7 +63,7 @@ public class NavegaciónController implements Initializable {
     // Establece la conexión con la base de datos
     private void connectDatabase() {    
         try {
-            conn = DriverManager.getConnection(jdbcUrl, username, contrasena);
+            this.conn = DriverManager.getConnection(jdbcUrl, username, contrasena);
             System.out.println("Conexión establecida");
             loadDatabases();
         } catch (SQLException ex) {
