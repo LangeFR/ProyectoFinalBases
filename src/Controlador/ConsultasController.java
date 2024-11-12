@@ -26,6 +26,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 import javafx.scene.text.Text;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 
 public class ConsultasController implements Initializable {
@@ -332,37 +334,63 @@ public class ConsultasController implements Initializable {
     }
 
     @FXML
-    private void ejecutarConsulta() {
-        if (consulta == null) {
-            System.err.println("La instancia de 'consulta' no está inicializada.");
-            return;
-        }
+// Variable para controlar la alerta
+private boolean alertShown = false;
 
-        // Limpiar consulta anterior
-        consulta.clear();
+private void ejecutarConsulta() {
+    if (consulta == null) {
+        System.err.println("La instancia de 'consulta' no está inicializada.");
+        return;
+    }
 
-        // Configurar JOIN si hay una segunda tabla seleccionada y ambas relaciones tienen un valor
+    if (selectedTable2 != null && !selectedTable2.isEmpty()) {
         String relacion1 = comboRelacionesTabla1.getValue();
         String relacion2 = comboRelacionesTabla2.getValue();
-        if (selectedTable2 != null && !selectedTable2.isEmpty() 
-            && relacion1 != null && !relacion1.isEmpty() 
-            && relacion2 != null && !relacion2.isEmpty()) {
-            consulta.addJoin("JOIN " + selectedTable2 + " ON " + selectedTable1 + "." + relacion1 + " = " + selectedTable2 + "." + relacion2);
-        }
 
-        // Verificar si se debe agregar la primera condición o si es "Está vacío"/"No está vacío"
+        boolean relacionesDefinidas = relacion1 != null && !relacion1.equals("Campo")
+                                      && relacion2 != null && !relacion2.equals("Campo");
+
+        if (!relacionesDefinidas) {
+            if (!alertShown) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error de Relaciones");
+                alert.setHeaderText(null);
+                alert.setContentText("Debe escoger una relación entre las tablas antes de ejecutar la consulta.");
+                alert.showAndWait();
+                alertShown = true; // Marcar que la alerta se ha mostrado
+            }
+            return;
+        } else {
+            alertShown = false; // Resetear el indicador si las relaciones están definidas
+        }
+        alertShown = false;
+        consulta.clear();
+        consulta.addJoin("JOIN " + selectedTable2 + " ON " + selectedTable1 + "." + relacion1 + " = " + selectedTable2 + "." + relacion2);
+    } else {
+        consulta.clear();
+    }
+
+    // Agregar condiciones
+    if (verifyConditions()) {
+        agregarCondicionesYConsultar();
+    }
+}
+
+    private boolean verifyConditions() {
         cond1 = (comboCampo1.getValue() != null && !comboCampo1.getValue().equals("Campo"))
                 && (comboOperador1.getValue() != null && !comboOperador1.getValue().equals("Operador"))
                 && (comboOperador1.getValue().equals("Esta vacio") || comboOperador1.getValue().equals("No esta vacio")
                     || (textInput1.getText() != null && !textInput1.getText().isEmpty()));
 
-        // Verificar si se debe agregar la segunda condición o si es "Está vacío"/"No está vacío"
         cond2 = (comboCampo2.getValue() != null && !comboCampo2.getValue().equals("Campo"))
                 && (comboOperador2.getValue() != null && !comboOperador2.getValue().equals("Operador"))
                 && (comboOperador2.getValue().equals("Esta vacio") || comboOperador2.getValue().equals("No esta vacio")
                     || (textInput2.getText() != null && !textInput2.getText().isEmpty()));
 
-        // Agregar condiciones si las banderas están activadas
+        return cond1 || cond2;
+    }
+
+    private void agregarCondicionesYConsultar() {
         if (cond1) {
             agregarFiltro(comboCampo1.getValue(), comboOperador1.getValue(), textInput1.getText());
         }
@@ -370,7 +398,6 @@ public class ConsultasController implements Initializable {
             agregarFiltro(comboCampo2.getValue(), comboOperador2.getValue(), textInput2.getText(), comboOperador3.getValue());
         }
 
-        // Ejecutar consulta y cargar los resultados
         ResultSet rs = consulta.execute();
         mostrarResultados(rs);
     }
