@@ -231,27 +231,33 @@ private void loadTables(String database, ListView<String>... lists) {
     // Maneja el evento de clic en el botón Consultar, cargando la vista correspondiente
     @FXML
     private void doConsultar(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/Consultas.fxml"));
-            Parent root = loader.load();
-            ConsultasController consultasController = loader.getController();
-            
-            // Pasar la conexión, base de datos y tablas seleccionadas
-            consultasController.initializeData(
-                conn,
-                list_base.getSelectionModel().getSelectedItem(),
-                list_tablas.getSelectionModel().getSelectedItem(),
-                list_tablas2.isDisabled() ? null : list_tablas2.getSelectionModel().getSelectedItem()
-            );
-            
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            System.out.println("Error al cargar la vista de Consultas: " + e.getMessage());
-            e.printStackTrace();
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/Consultas.fxml"));
+        Parent root = loader.load();
+        ConsultasController consultasController = loader.getController();
+
+        String selectedDatabase = list_base.getSelectionModel().getSelectedItem();
+        String selectedTable1 = list_tablas.getSelectionModel().getSelectedItem();
+        String selectedTable2 = list_tablas2.isDisabled() ? null : list_tablas2.getSelectionModel().getSelectedItem();
+
+        // Verificar si solo hay una tabla seleccionada
+        if (selectedTable2 == null) {
+            // Llamar a initializeData para una sola tabla
+            consultasController.initializeData(conn, selectedDatabase, selectedTable1);
+        } else {
+            // Llamar a initializeData para dos tablas
+            consultasController.initializeData(conn, selectedDatabase, selectedTable1, selectedTable2);
         }
+
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root));
+        stage.show();
+    } catch (IOException e) {
+        System.out.println("Error al cargar la vista de Consultas: " + e.getMessage());
+        e.printStackTrace();
     }
+}
+
 
     // Maneja el evento de clic en el botón Estructuras, cargando la vista de estructuras
     @FXML

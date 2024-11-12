@@ -25,6 +25,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import javafx.scene.text.Text;
+
 
 public class ConsultasController implements Initializable {
 
@@ -36,10 +38,29 @@ public class ConsultasController implements Initializable {
     private boolean cond1 = false;
     private boolean cond2 = false;
 
+    //2 tablas
     @FXML
-    private ComboBox<String> comboRelacionesTabla1;
+    private Text txtRelacionesTablas; // Texto para "Relaciones de Tablas"
     @FXML
-    private ComboBox<String> comboRelacionesTabla2;
+    private ComboBox<String> comboRelacionesTabla1; // ComboBox para la primera tabla en relaciones
+    @FXML
+    private ComboBox<String> comboRelacionesTabla2; // ComboBox para la segunda tabla en relaciones
+    @FXML
+    private Text txtIgualRelaciones; // Texto para el símbolo de igualdad o relación entre tablas
+    @FXML
+    private Text txtCondicion1; // Texto para la primera condición
+    @FXML
+    private Text txtCondicion2; // Texto para la segunda condición
+    @FXML
+    private RadioButton btnTabla1Condicion1; // RadioButton para seleccionar Tabla 1 en la Condición 1
+    @FXML
+    private RadioButton btnTabla1Condicion2; // RadioButton para seleccionar Tabla 1 en la Condición 2
+    @FXML
+    private RadioButton btnTabla2Condicion1; // RadioButton para seleccionar Tabla 2 en la Condición 1
+    @FXML
+    private RadioButton btnTabla2Condicion2; // RadioButton para seleccionar Tabla 2 en la Condición 2
+
+    
     @FXML
     private ComboBox<String> comboCampo1;
     @FXML
@@ -57,14 +78,7 @@ public class ConsultasController implements Initializable {
     private TextField textInput2;
 
     
-    @FXML
-    private RadioButton btnTabla1Condicion1;
-    @FXML
-    private RadioButton btnTabla2Condicion1;
-    @FXML
-    private RadioButton btnTabla1Condicion2;
-    @FXML
-    private RadioButton btnTabla2Condicion2;
+
 
     
     @FXML
@@ -72,38 +86,95 @@ public class ConsultasController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-    initializeOperatorCombos();
-    initializeLogicalOperatorCombo();
-    initializeTextInputs();
-    initializeListeners();
+        initializeOperatorCombos();
+        initializeLogicalOperatorCombo();
+        initializeTextInputs();
+        initializeListeners();
 
-    // Establecer valores predeterminados para los radio buttons
-    btnTabla1Condicion1.setSelected(true);
-    btnTabla1Condicion2.setSelected(true);
+        // Establecer valores predeterminados para los radio buttons
+        btnTabla1Condicion1.setSelected(true);
+        btnTabla1Condicion2.setSelected(true);
 
-    // Agregar listeners para los radio buttons para asegurar la actualización
-    ToggleGroup groupCondicion1 = new ToggleGroup();
-    btnTabla1Condicion1.setToggleGroup(groupCondicion1);
-    btnTabla2Condicion1.setToggleGroup(groupCondicion1);
+        // Agregar listeners para los radio buttons para asegurar la actualización
+        ToggleGroup groupCondicion1 = new ToggleGroup();
+        btnTabla1Condicion1.setToggleGroup(groupCondicion1);
+        btnTabla2Condicion1.setToggleGroup(groupCondicion1);
 
-    ToggleGroup groupCondicion2 = new ToggleGroup();
-    btnTabla1Condicion2.setToggleGroup(groupCondicion2);
-    btnTabla2Condicion2.setToggleGroup(groupCondicion2);
+        ToggleGroup groupCondicion2 = new ToggleGroup();
+        btnTabla1Condicion2.setToggleGroup(groupCondicion2);
+        btnTabla2Condicion2.setToggleGroup(groupCondicion2);
 
-    // Listener para Condición 1
-    groupCondicion1.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-        if (newValue != null) {
-            System.out.println("Condición 1 seleccionada: " + ((RadioButton) newValue).getText());
-        }
-    });
+        // Listener para Condición 1
+        groupCondicion1.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                System.out.println("Condición 1 seleccionada: " + ((RadioButton) newValue).getText());
+            }
+        });
 
-    // Listener para Condición 2
-    groupCondicion2.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-        if (newValue != null) {
-            System.out.println("Condición 2 seleccionada: " + ((RadioButton) newValue).getText());
-        }
-    });
-}
+        // Listener para Condición 2
+        groupCondicion2.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                System.out.println("Condición 2 seleccionada: " + ((RadioButton) newValue).getText());
+            }
+        });
+    }
+    
+
+    // Si solo se selecciona 1 tabla
+    public void initializeData(Connection conn, String database, String table) {
+        this.conn = conn;
+        this.selectedDatabase = database;
+        this.selectedTable1 = table;
+        this.selectedTable2 = null; // No hay segunda tabla
+
+        setDatabase();
+
+        // Cargar los campos de la única tabla seleccionada en los ComboBox de Condiciones
+        loadTableColumns(selectedTable1, comboCampo1);
+        loadTableColumns(selectedTable1, comboCampo2);
+
+        // Deshabilitar y ocultar componentes relacionados con la segunda tabla
+        txtRelacionesTablas.setDisable(true);
+        txtRelacionesTablas.setVisible(false);
+
+        comboRelacionesTabla1.setDisable(true);
+        comboRelacionesTabla1.setVisible(false);
+
+        comboRelacionesTabla2.setDisable(true);
+        comboRelacionesTabla2.setVisible(false);
+
+        txtIgualRelaciones.setDisable(true);
+        txtIgualRelaciones.setVisible(false);
+
+        btnTabla2Condicion1.setDisable(true);
+        btnTabla2Condicion1.setVisible(false);
+
+        btnTabla2Condicion2.setDisable(true);
+        btnTabla2Condicion2.setVisible(false);
+
+        // Asegurar que las condiciones apunten a la primera tabla y estén habilitadas
+        btnTabla1Condicion1.setSelected(true);
+        btnTabla1Condicion1.setDisable(false);
+        btnTabla1Condicion1.setVisible(false);
+
+        btnTabla1Condicion2.setSelected(true);
+        btnTabla1Condicion2.setDisable(false);
+        btnTabla1Condicion2.setVisible(false);
+
+        // Si tienes campos de texto específicos para condiciones, asegúrate de que estén habilitados
+        txtCondicion1.setDisable(false);
+        txtCondicion1.setVisible(false);
+
+        txtCondicion2.setDisable(false);
+        txtCondicion2.setVisible(false);
+
+        // Inicializar la instancia de Consulta para una sola tabla
+        this.consulta = new Consulta(conn, selectedTable1);
+
+        // Inicializar listeners después de configurar los datos
+        initializeListeners();
+    }
+
 
 
     public void initializeData(Connection conn, String database, String table1, String table2) {
@@ -124,7 +195,30 @@ public class ConsultasController implements Initializable {
         }
 
         consulta = new Consulta(conn, selectedTable1);
+
+        // Asegurarse de que los componentes de relaciones estén habilitados y visibles
+        txtRelacionesTablas.setDisable(false);
+        txtRelacionesTablas.setVisible(true);
+
+        comboRelacionesTabla1.setDisable(false);
+        comboRelacionesTabla1.setVisible(true);
+
+        comboRelacionesTabla2.setDisable(false);
+        comboRelacionesTabla2.setVisible(true);
+
+        txtIgualRelaciones.setDisable(false);
+        txtIgualRelaciones.setVisible(true);
+
+        btnTabla2Condicion1.setDisable(false);
+        btnTabla2Condicion1.setVisible(true);
+
+        btnTabla2Condicion2.setDisable(false);
+        btnTabla2Condicion2.setVisible(true);
+
+        // Inicializar listeners después de configurar los datos
+        initializeListeners();
     }
+
 
     private void setDatabase() {
         try {
@@ -136,42 +230,23 @@ public class ConsultasController implements Initializable {
     }
 
     private void initializeListeners() {
+        // Listeners para los operadores que son independientes de la segunda tabla
         comboOperador1.valueProperty().addListener((observable, oldValue, newValue) -> {
-        String operador = newValue;
-        String campo = comboCampo1.getValue();
+            handleOperatorChange(newValue, textInput1);
+            ejecutarConsulta();
+        });
 
-        // Lógica especial para operadores "Esta vacio" y "No esta vacio"
-        if (operador.equals("Esta vacio") || operador.equals("No esta vacio")) {
-            textInput1.clear();
-            textInput1.setDisable(true);
-        } else {
-            textInput1.setDisable(false);
+        comboOperador2.valueProperty().addListener((observable, oldValue, newValue) -> {
+            handleOperatorChange(newValue, textInput2);
+            ejecutarConsulta();
+        });
+
+        // Inicializar listeners para relaciones solo si hay dos tablas seleccionadas
+        if (selectedTable2 != null) {
+            initializeListenersRelaciones();
         }
-        
-        System.out.println("Ejecutando nulls...");
-        ejecutarConsulta();
-    });
 
-    comboOperador2.valueProperty().addListener((observable, oldValue, newValue) -> {
-        String operador = newValue;
-        String campo = comboCampo2.getValue();
-
-        // Lógica especial para operadores "Esta vacio" y "No esta vacio"
-        if (operador.equals("Esta vacio") || operador.equals("No esta vacio")) {
-            textInput2.clear();
-            textInput2.setDisable(true);
-        } else {
-            textInput2.setDisable(false);
-        }
-        
-        ejecutarConsulta();
-    });
-    System.out.println("Ejecutando no nulls...");
-        
-        
-        
-        initializeLIstenersRelaciones();
-        // Listener para los RadioButtons de selección de tabla para Condición 1
+        // Listeners para los RadioButtons de selección de tabla para Condición 1
         ChangeListener<Boolean> tablaCondicion1Listener = (observable, oldValue, newValue) -> {
             if (newValue) { // Solo reaccionar cuando el RadioButton está seleccionado
                 if (btnTabla1Condicion1.isSelected()) {
@@ -179,10 +254,11 @@ public class ConsultasController implements Initializable {
                 } else if (btnTabla2Condicion1.isSelected()) {
                     loadTableColumns(selectedTable2, comboCampo1);
                 }
+                ejecutarConsulta();
             }
         };
 
-        // Listener para los RadioButtons de selección de tabla para Condición 2
+        // Listeners para los RadioButtons de selección de tabla para Condición 2
         ChangeListener<Boolean> tablaCondicion2Listener = (observable, oldValue, newValue) -> {
             if (newValue) {
                 if (btnTabla1Condicion2.isSelected()) {
@@ -190,6 +266,7 @@ public class ConsultasController implements Initializable {
                 } else if (btnTabla2Condicion2.isSelected()) {
                     loadTableColumns(selectedTable2, comboCampo2);
                 }
+                ejecutarConsulta();
             }
         };
 
@@ -200,6 +277,20 @@ public class ConsultasController implements Initializable {
         btnTabla2Condicion2.selectedProperty().addListener(tablaCondicion2Listener);
 
         // Otros listeners existentes (ejecutar consulta en vivo, etc.)
+        setupLiveUpdateListeners();
+    }
+
+    private void handleOperatorChange(String newValue, TextField inputField) {
+        // Lógica especial para operadores "Esta vacio" y "No esta vacio"
+        if (newValue.equals("Esta vacio") || newValue.equals("No esta vacio")) {
+            inputField.clear();
+            inputField.setDisable(true);
+        } else {
+            inputField.setDisable(false);
+        }
+    }
+
+    private void setupLiveUpdateListeners() {
         ChangeListener<Object> liveUpdateListener = (observable, oldValue, newValue) -> ejecutarConsulta();
         comboCampo1.valueProperty().addListener(liveUpdateListener);
         comboCampo2.valueProperty().addListener(liveUpdateListener);
@@ -211,7 +302,8 @@ public class ConsultasController implements Initializable {
         textInput2.textProperty().addListener(liveUpdateListener);
     }
 
-    private void initializeLIstenersRelaciones(){
+
+    private void initializeListenersRelaciones(){
         // Listener para comboRelacionesTabla1
         comboRelacionesTabla1.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null && !newValue.equals("Campo")) {
@@ -237,46 +329,52 @@ public class ConsultasController implements Initializable {
                 ejecutarConsulta();
             }
         });
-
     }
+
     @FXML
-private void ejecutarConsulta() {
-    // Limpiar consulta anterior
-    consulta.clear();
+    private void ejecutarConsulta() {
+        if (consulta == null) {
+            System.err.println("La instancia de 'consulta' no está inicializada.");
+            return;
+        }
 
-    // Configurar JOIN si hay una segunda tabla seleccionada y ambas relaciones tienen un valor
-    String relacion1 = comboRelacionesTabla1.getValue();
-    String relacion2 = comboRelacionesTabla2.getValue();
-    if (selectedTable2 != null && !selectedTable2.isEmpty() 
-        && relacion1 != null && !relacion1.isEmpty() 
-        && relacion2 != null && !relacion2.isEmpty()) {
-        consulta.addJoin("JOIN " + selectedTable2 + " ON " + selectedTable1 + "." + relacion1 + " = " + selectedTable2 + "." + relacion2);
+        // Limpiar consulta anterior
+        consulta.clear();
+
+        // Configurar JOIN si hay una segunda tabla seleccionada y ambas relaciones tienen un valor
+        String relacion1 = comboRelacionesTabla1.getValue();
+        String relacion2 = comboRelacionesTabla2.getValue();
+        if (selectedTable2 != null && !selectedTable2.isEmpty() 
+            && relacion1 != null && !relacion1.isEmpty() 
+            && relacion2 != null && !relacion2.isEmpty()) {
+            consulta.addJoin("JOIN " + selectedTable2 + " ON " + selectedTable1 + "." + relacion1 + " = " + selectedTable2 + "." + relacion2);
+        }
+
+        // Verificar si se debe agregar la primera condición o si es "Está vacío"/"No está vacío"
+        cond1 = (comboCampo1.getValue() != null && !comboCampo1.getValue().equals("Campo"))
+                && (comboOperador1.getValue() != null && !comboOperador1.getValue().equals("Operador"))
+                && (comboOperador1.getValue().equals("Esta vacio") || comboOperador1.getValue().equals("No esta vacio")
+                    || (textInput1.getText() != null && !textInput1.getText().isEmpty()));
+
+        // Verificar si se debe agregar la segunda condición o si es "Está vacío"/"No está vacío"
+        cond2 = (comboCampo2.getValue() != null && !comboCampo2.getValue().equals("Campo"))
+                && (comboOperador2.getValue() != null && !comboOperador2.getValue().equals("Operador"))
+                && (comboOperador2.getValue().equals("Esta vacio") || comboOperador2.getValue().equals("No esta vacio")
+                    || (textInput2.getText() != null && !textInput2.getText().isEmpty()));
+
+        // Agregar condiciones si las banderas están activadas
+        if (cond1) {
+            agregarFiltro(comboCampo1.getValue(), comboOperador1.getValue(), textInput1.getText());
+        }
+        if (cond2) {
+            agregarFiltro(comboCampo2.getValue(), comboOperador2.getValue(), textInput2.getText(), comboOperador3.getValue());
+        }
+
+        // Ejecutar consulta y cargar los resultados
+        ResultSet rs = consulta.execute();
+        mostrarResultados(rs);
     }
 
-    // Verificar si se debe agregar la primera condición o si es "Está vacío"/"No está vacío"
-    cond1 = (comboCampo1.getValue() != null && !comboCampo1.getValue().equals("Campo"))
-            && (comboOperador1.getValue() != null && !comboOperador1.getValue().equals("Operador"))
-            && (comboOperador1.getValue().equals("Esta vacio") || comboOperador1.getValue().equals("No esta vacio")
-                || (textInput1.getText() != null && !textInput1.getText().isEmpty()));
-
-    // Verificar si se debe agregar la segunda condición o si es "Está vacío"/"No está vacío"
-    cond2 = (comboCampo2.getValue() != null && !comboCampo2.getValue().equals("Campo"))
-            && (comboOperador2.getValue() != null && !comboOperador2.getValue().equals("Operador"))
-            && (comboOperador2.getValue().equals("Esta vacio") || comboOperador2.getValue().equals("No esta vacio")
-                || (textInput2.getText() != null && !textInput2.getText().isEmpty()));
-
-    // Agregar condiciones si las banderas están activadas
-    if (cond1) {
-        agregarFiltro(comboCampo1.getValue(), comboOperador1.getValue(), textInput1.getText());
-    }
-    if (cond2) {
-        agregarFiltro(comboCampo2.getValue(), comboOperador2.getValue(), textInput2.getText(), comboOperador3.getValue());
-    }
-
-    // Ejecutar consulta y cargar los resultados
-    ResultSet rs = consulta.execute();
-    mostrarResultados(rs);
-}
 
 
 
@@ -285,7 +383,7 @@ private void ejecutarConsulta() {
     }
     
     
-private void agregarFiltro(String campo, String operador, String valor, String operadorLogico) {
+    private void agregarFiltro(String campo, String operador, String valor, String operadorLogico) {
     System.out.println("=== Inicio de agregarFiltro ===");
     System.out.println("Campo recibido: " + campo);
     System.out.println("Operador recibido: " + operador);
@@ -359,8 +457,8 @@ private void agregarFiltro(String campo, String operador, String valor, String o
 
 
 
-// Método auxiliar para verificar si un campo es ambiguo
-private boolean checkAmbiguity(String campo) {
+    // Método auxiliar para verificar si un campo es ambiguo
+    private boolean checkAmbiguity(String campo) {
     // Verificar si el campo existe en ambas tablas (usar nombres de columnas)
     return (comboCampo1.getItems().contains(campo) && comboCampo2.getItems().contains(campo));
 }

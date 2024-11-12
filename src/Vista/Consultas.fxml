@@ -14,14 +14,14 @@
    <children>
       <Pane layoutX="13.0" layoutY="31.0" prefHeight="338.0" prefWidth="646.0" style="-fx-background-color: #FFF3C2;">
          <children>
-            <Text layoutX="25.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Relaciones entre tablas">
+            <Text fx:id="txtRelacionesTablas" layoutX="25.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Relaciones entre tablas">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Text>
             <ComboBox fx:id="comboRelacionesTabla1" layoutX="26.0" layoutY="42.0" prefHeight="28.0" prefWidth="101.0" promptText="Selecciona la llave 1" />
             <ComboBox fx:id="comboRelacionesTabla2" layoutX="176.0" layoutY="42.0" prefHeight="28.0" prefWidth="101.0" promptText="Selecciona la llave 2" />
-            <Text layoutX="145.0" layoutY="60.0" strokeType="OUTSIDE" strokeWidth="0.0" text="=" wrappingWidth="14.933837890625">
+            <Text fx:id="txtIgualRelaciones" layoutX="145.0" layoutY="60.0" strokeType="OUTSIDE" strokeWidth="0.0" text="=" wrappingWidth="14.933837890625">
                <font>
                   <Font size="23.0" />
                </font>
@@ -55,12 +55,12 @@
             <RadioButton fx:id="btnTabla2Condicion1" layoutX="396.0" layoutY="50.0" mnemonicParsing="false" text="Tabla 2" />
             <RadioButton fx:id="btnTabla1Condicion2" layoutX="498.0" layoutY="33.0" mnemonicParsing="false" text="Tabla 1" />
             <RadioButton fx:id="btnTabla2Condicion2" layoutX="498.0" layoutY="50.0" mnemonicParsing="false" text="Tabla 2" />
-            <Text layoutX="398.0" layoutY="26.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Condicion 1">
+            <Text fx:id="txtCondicion1" layoutX="398.0" layoutY="26.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Condicion 1">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Text>
-            <Text layoutX="498.0" layoutY="26.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Condicion 2">
+            <Text fx:id="txtCondicion2" layoutX="498.0" layoutY="26.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Condicion 2">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
