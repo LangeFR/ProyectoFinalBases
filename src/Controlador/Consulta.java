@@ -13,93 +13,62 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Consulta {
-
-    private Connection connection;
+    private Connection conn;
     private String baseTable;
-    private List<String> joins;
-    private List<String> filters;
-    private String limit;
-    private String errorMessage;
+    private StringBuilder joins;
+    private StringBuilder filters;
+    private String error;
 
-    // Constructor
-    public Consulta(Connection connection, String baseTable) {
-        this.connection = connection;
+    public Consulta(Connection conn, String baseTable) {
+        this.conn = conn;
         this.baseTable = baseTable;
-        this.joins = new ArrayList<>();
-        this.filters = new ArrayList<>();
-        this.limit = "";
-        this.errorMessage = "";
+        this.joins = new StringBuilder();
+        this.filters = new StringBuilder();
+        this.error = "";
     }
 
-    // Métodos de construcción de consulta
-
-    public List<String> getFilters(){
-        return filters;
+    public void addJoin(String join) {
+        joins.append(" ").append(join);
     }
-    public void addJoin(String joinClause) {
-        this.joins.add(joinClause);
+
+    public boolean hasJoin() {
+        return joins.length() > 0;
     }
 
     public void addFilter(String filter) {
-        this.filters.add(filter);
-    }
-
-    public void setLimit(int limit) {
-        this.limit = "LIMIT " + limit;
+        if (filters.length() > 0) {
+            filters.append(" ").append(filter);
+        } else {
+            filters.append(" WHERE ").append(filter);
+        }
     }
 
     public void clear() {
-        this.joins.clear();
-        this.filters.clear();
-        this.limit = "";
-        this.errorMessage = "";
+        joins.setLength(0);
+        filters.setLength(0);
+        error = "";
     }
 
-    // Método para construir el SQL
     public String buildQuery() {
-        StringBuilder query = new StringBuilder("SELECT * FROM " + baseTable);
-
-        for (String join : joins) {
-            query.append(" ").append(join);
-        }
-
-        if (!filters.isEmpty()) {
-            query.append(" WHERE ");
-            query.append(String.join(" ", filters));
-        }
-
-        if (!limit.isEmpty()) {
-            query.append(" ").append(limit);
-        }
-
-        return query.toString();
+        return "SELECT * FROM " + baseTable + joins.toString() + filters.toString();
     }
 
-    // Método para ejecutar la consulta y obtener los resultados
     public ResultSet execute() {
         String query = buildQuery();
         try {
-            Statement statement = connection.createStatement();
-            return statement.executeQuery(query);
-        } catch (SQLException e) {
-            this.errorMessage = "Error al ejecutar la consulta: " + e.getMessage();
-            e.printStackTrace();
+            return conn.createStatement().executeQuery(query);
+        } catch (SQLException ex) {
+            error = ex.getMessage();
+            ex.printStackTrace();
             return null;
         }
     }
 
-    // Método para validar la consulta
-    public boolean isValid() {
-        return !buildQuery().isEmpty() && errorMessage.isEmpty();
-    }
-
-    // Obtener el mensaje de error
     public String getError() {
-        return this.errorMessage;
+        return error;
     }
 
-    // Obtener la consulta SQL en formato String para depuración
-    public String getSqlQuery() {
-        return buildQuery();
+    public StringBuilder getFilters() {
+        return filters;
     }
 }
